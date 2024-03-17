@@ -1,23 +1,24 @@
 <?php
+include_once "db_config.php";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    require_once "db_connection.php";
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $pgp_key = $_POST['pgp_key'];
 
-    $username = $_POST["username"];
-    $email = $_POST["email"];
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-    $pgp_key = $_POST["pgp_key"];
+    // You should add proper validation and sanitization here
 
-    $sql = "INSERT INTO users (username, email, password, pgp_key) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $username, $email, $password, $pgp_key);
-    
-    if ($stmt->execute()) {
-        echo "User registered successfully.";
+    // Hash PGP key or keep as plaintext, depending on your needs
+    $hashed_pgp_key = password_hash($pgp_key, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO users (username, email, pgp_key) VALUES ('$username', '$email', '$hashed_pgp_key')";
+
+    if (mysqli_query($conn, $sql)) {
+        echo "Registration successful!";
     } else {
-        echo "Error registering user: " . $stmt->error;
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
-
-    $stmt->close();
-    $conn->close();
 }
+
+mysqli_close($conn);
 ?>
