@@ -1,0 +1,14 @@
+<?php
+$gpg = new gnupg();
+
+// Import the public key
+$gpg->addencryptkey("recipient_key_id");
+
+// Encrypt the message
+$enc = $gpg->encrypt("Hello, World!", GPGME_ENCRYPT_ALWAYS_TRUST);
+echo $enc;
+
+// Decrypt the message
+$dec = $gpg->decrypt($enc);
+echo $dec;
+?>
